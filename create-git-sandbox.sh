@@ -1,16 +1,36 @@
 #!/bin/sh
 
-pushd .
+exitOnFail() {
+  if [ $? -ne 0 ] ; then
+    exit 1
+  fi 
+}
 
-sandbox_dir = ${HOME}/git-sandbox
+mkdirOrFail() {
+  directoryToCreate=$1
 
-mkdir -p $sandbox_dir/remote
-mkdir -p $sandbox_dir/clientA
+  mkdir -p $directoryToCreate
 
-cd $sandbox_dir/remote
+  exitOnFail
+}
+
+cdOrFail() {
+  directoryToChangeTo=$1
+
+  cd $directoryToChangeTo
+
+  exitOnFail
+}
+
+sandbox_dir=${HOME}/git-sandbox
+
+mkdirOrFail $sandbox_dir/remote
+mkdirOrFail $sandbox_dir/clientA
+
+cdOrFail $sandbox_dir/remote
 git init --bare
 
-cd $sandbox_dir/clientA
+cdOrFail $sandbox_dir/clientA
 git init
 touch README
 git add README
@@ -20,3 +40,14 @@ git push -u origin master
 
 cd $sandbox_dir
 git clone $sandbox_dir/remote clientB
+
+echo =============================================
+echo  Sandbox created at $sandbox_dir
+echo  Your remote origin repository is located at: $sandbox_dir/remote
+echo  Two mock clients were created:
+echo      $sandbox_dir/clientA 
+echo      $sandbox_dir/clientB
+echo
+echo  Go ahead and experiment with pushing/pulling/rebasing/branching/merging
+echo  using the mock clientA and clientB clones
+echo =============================================
