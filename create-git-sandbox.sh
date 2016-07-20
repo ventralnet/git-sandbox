@@ -22,7 +22,8 @@ cdOrFail() {
   exitOnFail
 }
 
-sandbox_dir=${HOME}/git-sandbox
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+sandbox_dir=$SCRIPT_DIR/git-sandbox
 
 mkdirOrFail $sandbox_dir/remote
 mkdirOrFail $sandbox_dir/clientA
